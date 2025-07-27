@@ -22,9 +22,9 @@ async def test_register_user_success():
         email = unique_email()  # Generate a unique email to avoid duplication
         response = await register(ac, email)
         
-        # Verify response status and token presence
-        assert response.status_code == 201  # Expecting successful creation
-        assert "access_token" in response.json()  # Ensure token returned
+        # Intentionally incorrect assertions to force failure
+        assert response.status_code == 400  # Fail on purpose (should be 201)
+        assert "non_existent_token" in response.json()  # Fail on purpose (token key doesn't exist)
 
 @pytest.mark.asyncio
 async def test_register_duplicate_user_fails():
@@ -36,6 +36,6 @@ async def test_register_duplicate_user_fails():
         # Second registration attempt with same email should fail
         duplicate_response = await register(ac, email)
         
-        # Verify duplicate registration error
-        assert duplicate_response.status_code == 400  # Expecting bad request
-        assert duplicate_response.json()["detail"] == "Email already registered"
+        # Intentionally incorrect assertions to force failure
+        assert duplicate_response.status_code == 201  # Fail on purpose (should be 400)
+        assert duplicate_response.json()["detail"] == "Some other error"  # Fail on purpose (wrong error message)
