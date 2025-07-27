@@ -11,3 +11,4 @@ class Settings:
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))  # ✅ Add this
 
 settings = Settings()
+
