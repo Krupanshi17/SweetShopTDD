@@ -6,7 +6,7 @@ from app.main import app
 async def test_register_login_and_errors():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        # ✅ Register new user
+        #  Register new user
         reg_response = await ac.post("/api/auth/register", json={
             "email": "anush@example.com",
             "password": "Secret123"
