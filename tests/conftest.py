@@ -1,7 +1,9 @@
+import asyncio
 import pytest
 
-# Fixture to specify which asynchronous backend to use for pytest-asyncio
-# Here, we explicitly set the backend to "asyncio" for running async tests.
-@pytest.fixture(scope="function")
-def anyio_backend():
-    return "asyncio"  # Tells pytest to use asyncio as the event loop backend
+@pytest.fixture(scope="session")
+def event_loop():
+    """Create a session-scoped event loop to avoid 'Event loop is closed' errors on Windows with Motor."""
+    loop = asyncio.new_event_loop()
+    yield loop
+    loop.close()

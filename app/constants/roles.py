@@ -1,4 +1,3 @@
-# app/constants/roles.py
 
 class Roles:
     ADMIN = "admin"
