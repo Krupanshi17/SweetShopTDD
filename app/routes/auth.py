@@ -11,3 +11,4 @@ async def register(user: UserCreate):
 @router.post("/login", response_model=TokenResponse)
 async def login(user: UserLogin):
     return await login_user(user)
+
