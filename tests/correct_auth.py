@@ -8,7 +8,7 @@ async def test_register_login_and_errors():
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         # ✅ Register new user
         reg_response = await ac.post("/api/auth/register", json={
-            "email": "test1@example.com",
+            "email": "krupanshi@example.com",
             "password": "Secret123"
         })
         assert reg_response.status_code == 201, f"Register failed: {reg_response.json()}"
