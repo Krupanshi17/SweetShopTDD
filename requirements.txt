@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+motor
+pydantic[email]
+python-dotenv
+passlib[bcrypt]
+python-jose[cryptography]
+pytest
+pytest-asyncio
+httpx
