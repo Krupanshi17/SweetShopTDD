@@ -7,3 +7,4 @@ db = client[settings.DB_NAME]
 # Example collections
 user_collection = db.get_collection("users")
 sweet_collection = db.get_collection("sweets")
+
