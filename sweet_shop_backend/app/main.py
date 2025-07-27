@@ -57,3 +57,16 @@ app.openapi = custom_openapi
 @app.on_event("startup")
 async def startup_event():
     await seed_admin()
+
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify ["http://localhost:5173"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+

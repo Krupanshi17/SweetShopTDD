@@ -1,29 +1,37 @@
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { loginApi } from "../services/authService";
+import React, { useState } from 'react';
+import { loginApi } from '../services/authService';
+import { useNavigate } from 'react-router-dom';
 
-export default function Login() {
-  const { login } = useContext(AuthContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    setError('');
+
     try {
-      const token = await loginApi(email, password);
-      login(token);
+      const data = await loginApi(email, password);
+      localStorage.setItem('token', data.access_token);
+      alert('Login Successful!');
+      navigate('/dashboard'); // Redirect after login
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      console.error(err);
+      setError('Invalid credentials or server error.');
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background px-4">
-      <h1 className="text-4xl font-bold text-primaryDark mb-6">Login</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
-        {error && <div className="mb-4 text-red-600 font-semibold">{error}</div>}
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded shadow-md w-96"
+      >
+        <h2 className="text-2xl font-bold mb-4">Login</h2>
+        {error && <p className="text-red-500 mb-2">{error}</p>}
+
         <input
           type="email"
           placeholder="Email"
@@ -42,11 +50,19 @@ export default function Login() {
         />
         <button
           type="submit"
-          className="w-full bg-accentCTA text-black font-bold py-2 rounded hover:bg-secondary transition"
+          className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
         >
           Login
         </button>
+        <p className="text-sm mt-4">
+          Don't have an account?{' '}
+          <a href="/register" className="text-blue-500">
+            Register
+          </a>
+        </p>
       </form>
     </div>
   );
-}
+};
+
+export default Login;
