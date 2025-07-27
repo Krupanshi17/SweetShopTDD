@@ -1,25 +1,21 @@
 # app/schemas/user_schema.py
 
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
-# Schema for user registration
 class UserCreate(BaseModel):
-    email: EmailStr  # Validated email address
-    password: str    # Plain password (will be hashed before storing)
+    # Schema for user registration request
+    email: EmailStr  # User's email address (validated)
+    password: str    # User's password
+    role: str = "user"  # User role, defaults to 'user'
+    admin_secret: Optional[str] = None  # Optional secret key for admin registration
 
-# Schema for user login
 class UserLogin(BaseModel):
-    email: EmailStr  # Validated email address
-    password: str    # Plain password for authentication
+    # Schema for user login request
+    email: EmailStr  # User's email address (validated)
+    password: str    # User's password
 
-# Schema representing a user stored in the database
-class UserInDB(BaseModel):
-    id: str                # Unique user identifier (usually MongoDB ObjectId or UUID)
-    email: EmailStr        # User's email
-    hashed_password: str   # Hashed password stored in DB
-    role: str = "user"     # Default role assigned to user (can be 'admin' or 'user')
-
-# Schema for JWT token response after login or registration
 class TokenResponse(BaseModel):
-    access_token: str      # JWT token for authentication
-    token_type: str = "bearer"  # Token type (usually 'bearer')
+    # Schema for token response after successful login/registration
+    access_token: str  # JWT access token string
+    token_type: str = "bearer"  # Token type, defaults to 'bearer'
