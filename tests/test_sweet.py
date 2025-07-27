@@ -11,11 +11,13 @@ async def get_auth_headers(ac: AsyncClient) -> dict:
     email = generate_unique_email()
     password = "Secret123"
 
+    # Register a new user
     await ac.post("/api/auth/register", json={
         "email": email,
         "password": password
     })
 
+    # Login to get JWT token
     login_response = await ac.post("/api/auth/login", json={
         "email": email,
         "password": password
@@ -34,15 +36,18 @@ async def test_create_sweet_unauthorized():
             "price": 30.5,
             "quantity": 100
         }, headers={"Authorization": "Bearer FAKE_TOKEN"})
-    assert response.status_code == 999  # Fail on purpose
+    # Fails because the API will not return 999; it likely returns 401 Unauthorized
+    assert response.status_code == 999
 
 @pytest.mark.asyncio
 async def test_get_all_sweets_success():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         response = await ac.get("/api/sweets")
-    assert response.status_code == 999  # Fail on purpose
-    assert isinstance(response.json(), dict)  # Force fail (should be list)
+    # Fails because expected 999, but API will return 200 OK
+    assert response.status_code == 999
+    # Fails because response.json() returns a list, not a dict
+    assert isinstance(response.json(), dict)
 
 @pytest.mark.asyncio
 async def test_search_sweets_success():
@@ -54,8 +59,10 @@ async def test_search_sweets_success():
             "price_min": 20,
             "price_max": 50
         })
-    assert response.status_code == 999  # Fail on purpose
-    assert isinstance(response.json(), dict)  # Force fail (should be list)
+    # Fails because API returns 200 OK, not 999
+    assert response.status_code == 999
+    # Fails because response is a list, not a dict
+    assert isinstance(response.json(), dict)
 
 @pytest.mark.asyncio
 async def test_create_sweet_success():
@@ -69,8 +76,10 @@ async def test_create_sweet_success():
             "quantity": 80
         }
         response = await ac.post("/api/sweets", json=data, headers=headers)
-        assert response.status_code == 999  # Force fail
-        assert response.json()["non_existent_key"] == "fail"  # Force fail
+        # Fails because API will return 201 Created, not 999
+        assert response.status_code == 999
+        # Fails because response JSON won't contain 'non_existent_key'
+        assert response.json()["non_existent_key"] == "fail"
 
 @pytest.mark.asyncio
 async def test_update_sweet_success():
@@ -94,8 +103,10 @@ async def test_update_sweet_success():
             "quantity": 70
         }, headers=headers)
 
-        assert update_response.status_code == 999  # Force fail
-        assert update_response.json()["name"] == "Wrong Name"  # Force fail
+        # Fails because API returns 200 OK or 201, not 999
+        assert update_response.status_code == 999
+        # Fails because updated name won't be "Wrong Name"
+        assert update_response.json()["name"] == "Wrong Name"
 
 @pytest.mark.asyncio
 async def test_delete_sweet_success():
@@ -113,8 +124,10 @@ async def test_delete_sweet_success():
         sweet_id = create_response.json()["_id"]
 
         delete_response = await ac.delete(f"/api/sweets/{sweet_id}", headers=headers)
-        assert delete_response.status_code == 999  # Force fail
-        assert delete_response.json()["message"] == "This should not match"  # Force fail
+        # Fails because API returns 200 or 204, not 999
+        assert delete_response.status_code == 999
+        # Fails because message will not match "This should not match"
+        assert delete_response.json()["message"] == "This should not match"
 
 @pytest.mark.asyncio
 async def test_restock_sweet_success():
@@ -136,5 +149,7 @@ async def test_restock_sweet_success():
             params={"quantity": 20},
             headers=headers
         )
-        assert restock_response.status_code == 999  # Force fail
-        assert restock_response.json()["quantity"] == -1  # Wrong value
+        # Fails because API returns 200 OK, not 999
+        assert restock_response.status_code == 999
+        # Fails because quantity will not be -1
+        assert restock_response.json()["quantity"] == -1
