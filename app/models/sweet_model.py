@@ -5,3 +5,4 @@ class Sweet(BaseModel):
     category: str
     price: float
     quantity: int
+
