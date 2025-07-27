@@ -4,11 +4,11 @@ from app.routes import auth,sweet # adjust this to your project structure
 
 app = FastAPI()
 
-# ✅ Register routes first
+# Register routes first
 app.include_router(auth.router)
 app.include_router(sweet.router)
 
-# ✅ Custom OpenAPI schema for global "Authorize" button
+# Custom OpenAPI schema for global "Authorize" button
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
@@ -28,7 +28,7 @@ def custom_openapi():
         }
     }
 
-    # 🔥 Inject BearerAuth globally
+    # Inject BearerAuth globally
     for path in openapi_schema["paths"].values():
         for operation in path.values():
             operation.setdefault("security", [{"BearerAuth": []}])
