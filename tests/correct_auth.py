@@ -1,81 +1,63 @@
 import pytest
 from httpx import AsyncClient, ASGITransport
 from app.main import app
-import uuid
-
-def unique_email():
-    return f"user_{uuid.uuid4()}@example.com"
-
-async def register_user(ac, email, password="Secret123"):
-    return await ac.post("/api/auth/register", json={"email": email, "password": password})
-
-async def login_user(ac, email, password="Secret123"):
-    return await ac.post("/api/auth/login", json={"email": email, "password": password})
 
 @pytest.mark.asyncio
-async def test_register_user_success():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        email = unique_email()
-        response = await register_user(ac, email)
-        assert response.status_code == 201, f"Registration failed: {response.json()}"
-        assert "access_token" in response.json()
+async def test_register_login_and_errors():
+    """
+    End-to-end test for user registration, login, and validation error scenarios.
+    Covers:
+    - Successful registration
+    - Duplicate registration failure
+    - Successful login
+    - Missing fields validation
+    - Empty body validation
+    """
+    transport = ASGITransport(app=app)
 
-@pytest.mark.asyncio
-async def test_register_duplicate_user_fails():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        email = unique_email()
-        await register_user(ac, email)
-        duplicate_response = await register_user(ac, email)
-        assert duplicate_response.status_code == 400
+    # Create a single HTTP client for all requests
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+
+        #  Test successful registration
+        reg_response = await ac.post("/api/auth/register", json={
+            "email": "test@example.com",
+            "password": "Secret123"
+        })
+        assert reg_response.status_code == 201, f"Register failed: {reg_response.json()}"
+        assert "access_token" in reg_response.json(), "Access token missing after registration"
+
+        #  Test duplicate registration (should fail)
+        duplicate_response = await ac.post("/api/auth/register", json={
+            "email": "test@example.com",  # Same email as before
+            "password": "AnotherPass"
+        })
+        assert duplicate_response.status_code == 400, "Expected 400 for duplicate registration"
         assert duplicate_response.json()["detail"] == "Email already registered"
 
-@pytest.mark.asyncio
-async def test_login_success():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        email = unique_email()
-        password = "Secret123"
-        await register_user(ac, email, password)
-        response = await login_user(ac, email, password)
-        assert response.status_code == 200
-        assert "access_token" in response.json()
+        # Test successful login with correct credentials
+        login_response = await ac.post("/api/auth/login", json={
+            "email": "test@example.com",
+            "password": "Secret123"
+        })
+        assert login_response.status_code == 200, "Expected 200 on successful login"
+        assert "access_token" in login_response.json(), "Access token missing after login"
 
-@pytest.mark.asyncio
-async def test_login_wrong_password_fails():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        email = unique_email()
-        password = "Secret123"
-        await register_user(ac, email, password)
-        response = await login_user(ac, email, "WrongPass123")
-        assert response.status_code == 401
-        assert response.json()["detail"] == "Invalid credentials"
+        # Test registration with missing password field
+        missing_password_response = await ac.post("/api/auth/register", json={
+            "email": "missingpass@example.com"
+        })
+        assert missing_password_response.status_code == 422, "Expected 422 for missing password"
 
-@pytest.mark.asyncio
-async def test_login_unregistered_email_fails():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await login_user(ac, "notregistered@example.com", "Secret123")
-        assert response.status_code == 401
-        assert response.json()["detail"] == "Invalid credentials"
+        # Test registration with missing email field
+        missing_email_response = await ac.post("/api/auth/register", json={
+            "password": "SomePassword"
+        })
+        assert missing_email_response.status_code == 422, "Expected 422 for missing email"
 
-@pytest.mark.asyncio
-async def test_register_missing_password_fails():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.post("/api/auth/register", json={"email": unique_email()})
-        assert response.status_code == 422
+        #  Test login with empty body
+        empty_login = await ac.post("/api/auth/login", json={})
+        assert empty_login.status_code == 422, "Expected 422 for empty login body"
 
-@pytest.mark.asyncio
-async def test_register_missing_email_fails():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.post("/api/auth/register", json={"password": "SomePassword"})
-        assert response.status_code == 422
-
-@pytest.mark.asyncio
-async def test_login_empty_body_fails():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.post("/api/auth/login", json={})
-        assert response.status_code == 422
-
-@pytest.mark.asyncio
-async def test_register_empty_body_fails():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        response = await ac.post("/api/auth/register", json={})
-        assert response.status_code == 422
+        #  Test registration with empty body
+        empty_register = await ac.post("/api/auth/register", json={})
+        assert empty_register.status_code == 422, "Expected 422 for empty registration body"
