@@ -5,3 +5,5 @@ class User(BaseModel):
     email: EmailStr
     hashed_password: str
     role: str = "user"  # "user" or "admin"
+
+    
