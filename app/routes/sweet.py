@@ -8,7 +8,7 @@ router = APIRouter(
     tags=["Sweets"]
 )
 
-# 🟢 USER ACCESS
+#  USER ACCESS
 @router.get("/", response_model=List[SweetResponse])
 async def get_all_sweets():
     return await sweet_service.get_all_sweets()
@@ -22,7 +22,7 @@ async def search_sweets(
 ):
     return await sweet_service.search_sweets(name, category, price_min, price_max)
 
-# 🔴 ADMIN ONLY
+#  ADMIN ONLY
 @router.post("/", response_model=SweetResponse, status_code=201)
 async def create_sweet(data: SweetCreate):
     return await sweet_service.create_sweet(data)
