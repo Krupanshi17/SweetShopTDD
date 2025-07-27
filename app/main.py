@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
-from app.routes import auth # adjust this to your project structure
+from app.routes import auth,sweet # adjust this to your project structure
 
 app = FastAPI()
 
 # ✅ Register routes first
 app.include_router(auth.router)
+app.include_router(sweet.router)
 
 # ✅ Custom OpenAPI schema for global "Authorize" button
 def custom_openapi():
