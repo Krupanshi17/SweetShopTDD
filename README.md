@@ -317,4 +317,4 @@ Upon backend startup, a default admin user is created:
 ![Sweet Shop](images/TestCoverage.jpg)
 
 
-![Sweet Shop](images/TestCoverage.jpg)
+
