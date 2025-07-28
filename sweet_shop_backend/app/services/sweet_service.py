@@ -1,25 +1,20 @@
 # app/services/sweet_service.py
 from fastapi import HTTPException
 from app.database import sweet_collection
-from app.schemas.sweet_schema import SweetCreate, SweetUpdate
+from app.schemas.sweet_schema import SweetCreate, SweetUpdate, SweetResponse
 from bson import ObjectId
 
 def obj_to_dict(sweet) -> dict:
-    """
-    Convert MongoDB document to dict with string ID and without _id field.
-    """
-    sweet["id"] = str(sweet["_id"])
-    del sweet["_id"]
+    sweet["_id"] = str(sweet["_id"])  # Just convert ObjectId to string
     return sweet
 
+
 async def create_sweet(data: SweetCreate):
-    """
-    Insert a new sweet document and return the inserted sweet as dict.
-    """
     sweet_dict = data.dict()
     result = await sweet_collection.insert_one(sweet_dict)
     sweet = await sweet_collection.find_one({"_id": result.inserted_id})
-    return obj_to_dict(sweet)
+    sweet = obj_to_dict(sweet)  # This must return _id (as string), not id
+    return SweetResponse(**sweet)
 
 async def get_all_sweets():
     """

@@ -16,12 +16,12 @@ class SweetUpdate(BaseModel):
     quantity: Optional[int]
 
 class SweetResponse(BaseModel):
-    # Schema for sweet data returned in API responses
-    id: str = Field(..., alias="_id")  # Map MongoDB _id field to id in response
+    id: str = Field(..., alias="_id")  # Accepts _id but outputs as id
     name: str
     category: str
     price: float
     quantity: int
 
     class Config:
-        allow_population_by_field_name = True  # Allow using "id" field name when returning responses
+        allow_population_by_field_name = True  # So you can use .dict(by_alias=True) later
+        orm_mode = True  # Allow using "id" field name when returning responses
