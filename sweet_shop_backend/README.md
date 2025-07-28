@@ -62,6 +62,27 @@ pytest --cov=app         # Run with coverage
 pytest tests/test_auth.py # Run specific tests
 ```
 
+### Test Coverage
+
+Current test coverage: **53.6%** (149/278 lines covered)
+
+| Package | Coverage |
+|---------|----------|
+| schemas | 100% |
+| config/database | 100% |
+| services | 51% |
+| routes | 60% |
+| models | 0% |
+
+
+![Sweet Shop](images/TestCoverage.jpeg)
+
+Generate detailed coverage report:
+```bash
+pytest --cov=app --cov-report=html
+open htmlcov/index.html
+```
+
 ## Project Structure
 
 ```
@@ -84,9 +105,5 @@ sweetshop/
 ## Default Admin Account
 
 On startup, an admin account is automatically created:
-- **Email**: admin@sweetshop.com
+- **Email**: admin@example.com
 - **Password**: AdminSecret123
-
-## License
-
-This project is licensed under the MIT License.
