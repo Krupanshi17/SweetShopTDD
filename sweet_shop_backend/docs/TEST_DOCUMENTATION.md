@@ -205,23 +205,50 @@ async def get_auth_headers(client: AsyncClient, is_admin: bool = True) -> dict:
 
 ---
 
-## 📊 Coverage Goals
+## 📊 Test Coverage Report
 
-### ✅ Already Covered
+### Current Coverage: **53.6%** (149/278 lines)
 
+| Package | Lines | Covered | Coverage |
+|---------|-------|---------|----------|
+| **schemas** | 33 | 33 | **100%** |
+| **config/database** | 19 | 19 | **100%** |
+| **routes** | 58 | 35 | **60%** |
+| **services** | 96 | 49 | **51%** |
+| **models** | 11 | 0 | **0%** |
+| **main** | 23 | 13 | **57%** |
+
+### 📈 Coverage by Component
+
+#### ✅ Well Covered (80%+)
+* Schema validation (100%)
+* Configuration setup (100%)
+* Authentication routes (100%)
+
+#### 🔶 Partially Covered (40-79%)
+* Sweet management routes (48%)
+* Authentication services (70%)
+* Main application setup (57%)
+
+#### ❌ Needs Coverage (<40%)
+* Data models (0%)
+* Sweet services (needs implementation)
+
+### 🎯 Coverage Goals
+
+#### ✅ Already Covered
 * Authentication flows (register/login)
 * Role-based access (admin vs user)
 * Public and admin sweet endpoints
 * Validation errors
 * Auth header checks
 
-### 🔄 Suggested Additions
-
-* JWT expiration handling
-* Invalid token formats
-* Database connectivity issues
-* Performance/load simulation
-* Concurrency (race conditions on restock)
+#### 🔄 Priority Improvements
+* **Models**: Add unit tests for data models (0% → 80%)
+* **Sweet Services**: Test business logic thoroughly
+* **Error Handling**: Cover exception paths in routes
+* **Edge Cases**: JWT expiration, invalid tokens
+* **Integration**: Database connectivity scenarios
 
 ---
 
