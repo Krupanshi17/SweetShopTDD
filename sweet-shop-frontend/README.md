@@ -1,63 +1,82 @@
+#  Sweet Shop Frontend
 
-# Sweet Shop Frontend
+The Sweet Shop Frontend is a modern and responsive React + TailwindCSS application that connects to a FastAPI backend to provide a full-featured e-commerce-like experience. It supports user authentication, role-based access control, cart functionality, and sweet inventory management with an intuitive UI tailored for both users and administrators.
 
-A React-based modern frontend for managing a Sweet Shop with user authentication, role-based access, cart management, and responsive UI built with TailwindCSS.
+##  Features
 
-## Features
+###  User Management
+- Secure JWT-based authentication
+- Registration and Login flows with form validation
+- Role-based access control:
+  - Users can browse sweets and manage their cart
+  - Admins can manage sweets (add, update, delete, restock)
 
-- **User Authentication**: JWT-based login/registration system
-- **Role-based Access**: Admin and user roles with protected routes
-- **Sweet Management**: Browse sweets for users; CRUD operations for Admin
-- **Cart Functionality**: Add, update, and remove sweets from cart
-- **Search & Filter**: Search sweets by name or category
-- **Responsive Design**: Mobile-friendly layout using TailwindCSS
-- **Toast Notifications**: Real-time feedback for actions (React Toastify)
+###  Sweet Inventory
+- Fetch all sweets with pagination (optional)
+- Search and filter sweets by name or category
+- View sweet details with quantity and price
+- Admins can perform:
+  - Create new sweets
+  - Edit existing sweets
+  - Delete sweets
+  - Restock inventory
 
----
+###  Cart System
+- Add sweets to cart (with quantity control)
+- Modify quantity or remove items
+- Persistent cart using local storage
 
-## Quick Start
+###  Responsive UI
+- Mobile-first layout using TailwindCSS
+- Adaptive design for tablets and desktops
+- Clean e-commerce inspired UI
 
-### Prerequisites
+###  Real-Time Feedback
+- Toast notifications powered by React Toastify
+- Feedback for login, logout, cart actions, CRUD ops, etc.
 
-- Node.js 18+
+##  Quick Start
+
+###  Prerequisites
+- Node.js v18+
 - npm or yarn
-- Sweet Shop API backend running (see backend README)
+- A running Sweet Shop Backend API
 
----
+###  Setup
 
-### Installation
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/your-username/sweet-shop-frontend.git
+   cd sweet-shop-frontend
+   ```
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd sweet-shop-frontend
-```
+2. **Install Dependencies**
+   ```bash
+   npm install
+   # or
+   yarn
+   ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+3. **Environment Configuration**
+   Create a `.env` file in the project root:
+   ```env
+   VITE_API_BASE_URL=http://localhost:8000/api
+   ```
 
-3. Configure environment variables:
-Create a `.env` file in the root directory and add:
-```
-VITE_API_BASE_URL=http://localhost:8000/api
-```
+4. **Run the Development Server**
+   ```bash
+   npm run dev
+   ```
 
-4. Run the application:
-```bash
-npm run dev
-```
+5. **Access the App**
+   Open http://localhost:5173 in your browser.
 
-The frontend will be available at `http://localhost:5173`
+##  API Integration
 
----
+All requests are made through a centralized Axios instance configured to automatically attach the JWT token for authenticated endpoints.
 
-## API Integration Details
-
-The application uses **Axios** for all API calls with JWT authentication. Axios instance is configured in `src/services/axiosInstance.js`:
-
-```javascript
+```js
+// src/services/axiosInstance.js
 import axios from "axios";
 
 const API = axios.create({
@@ -75,63 +94,70 @@ API.interceptors.request.use((req) => {
 export default API;
 ```
 
-### Endpoints Used:
+##  API Endpoints Used
 
-- **Auth**
-  - POST `/auth/login` – User login
-  - POST `/auth/register` – User registration
-- **Sweets**
-  - GET `/sweets/` – Fetch all sweets
-  - GET `/sweets/search?name=&category=` – Search sweets
-  - POST `/sweets/` – Add sweet (Admin only)
-  - PUT `/sweets/{id}` – Update sweet (Admin only)
-  - DELETE `/sweets/{id}` – Delete sweet (Admin only)
-  - PATCH `/sweets/{id}/restock` – Restock sweet (Admin only)
+###  Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/auth/register` | Register a new user |
+| POST | `/auth/login` | Login with credentials |
 
----
+###  Sweets
+| Method | Endpoint | Role | Description |
+|--------|----------|------|-------------|
+| GET | `/sweets/` | Public | Fetch all sweets |
+| GET | `/sweets/search?name=&category=` | Public | Search/filter sweets |
+| POST | `/sweets/` | Admin only | Add a new sweet |
+| PUT | `/sweets/{id}` | Admin only | Update sweet details |
+| DELETE | `/sweets/{id}` | Admin only | Delete a sweet |
+| PATCH | `/sweets/{id}/restock` | Admin only | Restock quantity |
 
 ## Project Structure
 
 ```
 sweet-shop-frontend/
+├── public/                      # Static assets
 ├── src/
-│   ├── assets/            # Images & icons
-│   ├── components/        # Navbar, SweetCard, Modal
-│   ├── context/           # AuthContext, CartContext
-│   ├── pages/             # Login, Register, Dashboard, Cart, Admin
-│   ├── routes/            # AppRoutes and ProtectedRoute
-│   ├── services/          # Axios instance & API helpers
-│   ├── App.jsx            # Main App component
-│   ├── main.jsx           # Entry point
-│   └── index.css          # TailwindCSS imports
-├── public/                # Static files
-├── postcss.config.cjs     # PostCSS configuration
-├── tailwind.config.js     # TailwindCSS configuration
-├── package.json           # Dependencies and scripts
-└── README.md              # This file
+│   ├── assets/                  # Images, icons, etc.
+│   ├── components/              # Reusable UI components (Navbar, SweetCard, etc.)
+│   ├── context/                 # React contexts (AuthContext, CartContext)
+│   ├── pages/                   # Application pages (Login, Register, Cart, AdminPanel, etc.)
+│   ├── routes/                  # Route setup and ProtectedRoute logic
+│   ├── services/                # API logic and Axios configuration
+│   ├── App.jsx                  # Main app component with layout
+│   ├── main.jsx                 # React entry point
+│   └── index.css                # Tailwind and global styles
+├── .env                         # Environment config
+├── tailwind.config.js           # TailwindCSS configuration
+├── postcss.config.cjs           # PostCSS setup
+├── package.json                 # Scripts and dependencies
+└── README.md                    # Project documentation
 ```
 
----
+##  Scripts
 
-## Scripts
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build the app for production |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Run linter to check for issues |
 
-```bash
-npm run dev       # Start development server
-npm run build     # Build for production
-npm run preview   # Preview production build
-npm run lint      # Lint project files
+##  Default Admin Credentials
+
+Use the following credentials to log in as an admin:
+
+```
+Email:    admin@sweetshop.com  
+Password: AdminSecret123
 ```
 
----
+*These must match the credentials registered in the backend.*
 
-## Default Admin Account
+##  Future Improvements
 
-Use the same admin credentials as the backend:
-- **Email**: admin@sweetshop.com
-- **Password**: AdminSecret123
-
----
-
-## License
-
-This project is licensed under the MIT License.
+- Add pagination to sweet listing
+- Order history and user profile page
+- Payment integration (Stripe or Razorpay)
+- Theme switcher (light/dark mode)
+- Admin analytics dashboard
